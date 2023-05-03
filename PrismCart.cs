@@ -3,12 +3,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using Newtonsoft.Json;
+using Oxide.Core.Configuration;
 
 namespace Oxide.Plugins {
   [Info("Prism Cart", "Cassanova", "1.1.1")]
   public class PrismCart: RustPlugin {
-    private
-    const string apiUrl = "http://rustprism.test/api/orders/";
+    private string apiUrl;
+    private string apiKey;
     private readonly CommandTimer commandTimer = new CommandTimer();
 
     protected override void LoadDefaultMessages() {
@@ -17,6 +18,7 @@ namespace Oxide.Plugins {
         ["EmptyCart"] = "Your cart is empty.",
         ["GetSuccess"] = "You have successfully received your items. Thank you!",
         ["UnknownError"] = "An error occurred while retrieving cart items.",
+        ["PleaseWait"] = "Please wait a moment. We are checking the availability of the order...",
       }, this);
 
       lang.RegisterMessages(new Dictionary < string, string > {
@@ -24,8 +26,22 @@ namespace Oxide.Plugins {
         ["EmptyCart"] = "Ваш кошик пустий.",
         ["GetSuccess"] = "Ви успішно отримали свої товари. Дякуємо!",
         ["UnknownError"] = "Виникла помилка під час отримання товарів у кошику.",
+        ["PleaseWait"] = "Зачекайте будь ласка. Перевіряємо наявність заказу...",
       }, this, "uk");
     }
+    
+    protected override void LoadDefaultConfig()
+    {
+      Config["ApiUrl"] = "http://rustprism.test/api/orders/";
+      Config["ApiKey"] = "GeGeFqp5xsdAjYJiTxDhARvIozOcVThT";
+    }
+
+    void OnServerInitialized()
+    {
+        apiUrl = Config.Get<string>("ApiUrl");
+        apiKey = Config.Get<string>("ApiKey");
+    }
+
 
     [ChatCommand("getcart")]
     private async void PrismCartCommand(BasePlayer player, string command, string[] args) {
@@ -35,10 +51,11 @@ namespace Oxide.Plugins {
         return;
       }
 
-      string steamId = player.UserIDString;
+      player.ChatMessage(lang.GetMessage("PleaseWait", this, player.UserIDString));
 
+      string steamId = player.UserIDString;
       using(var webClient = new System.Net.WebClient()) {
-        webClient.Headers.Add("X-API-KEY", "GeGeFqp5xsdAjYJiTxDhARvIozOcVThT");
+        webClient.Headers.Add("X-API-KEY", apiKey);
         try {
           string json = await webClient.DownloadStringTaskAsync(apiUrl + steamId);
 
