@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using Oxide.Core.Configuration;
 
 namespace Oxide.Plugins {
-  [Info("Prism Cart", "Cassanova", "1.1.1")]
+  [Info("Prism Cart", "Cassanova", "1.0.0")]
   public class PrismCart: RustPlugin {
     private string apiUrl;
     private string apiKey;
