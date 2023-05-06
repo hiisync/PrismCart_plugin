@@ -43,7 +43,7 @@ namespace Oxide.Plugins {
     }
 
 
-    [ChatCommand("getcart")]
+    [ChatCommand("cart")]
     private async void PrismCartCommand(BasePlayer player, string command, string[] args) {
 
       if (!commandTimer.CheckCooldown(player)) {
