@@ -17,7 +17,7 @@ namespace Oxide.Plugins {
         ["AntiFlood"] = "This command is locked to prevent flooding. Please wait a few seconds.",
         ["EmptyCart"] = "Your cart is empty.",
         ["GetSuccess"] = "You have successfully received your items. Thank you!",
-        ["UnknownError"] = "An error occurred while retrieving cart items.",
+        ["UnknownError"] = "An error occurred while retrieving cart items. Please contact the Server Administration.",
         ["PleaseWait"] = "Please wait a moment. We are checking the availability of the order...",
       }, this);
 
@@ -25,8 +25,8 @@ namespace Oxide.Plugins {
         ["AntiFlood"] = "Ця команда заблокована для запобігання перенавантаження. Будь ласка, зачекайте кілька секунд.",
         ["EmptyCart"] = "Ваш кошик пустий.",
         ["GetSuccess"] = "Ви успішно отримали свої товари. Дякуємо!",
-        ["UnknownError"] = "Виникла помилка під час отримання товарів у кошику.",
-        ["PleaseWait"] = "Зачекайте будь ласка. Перевіряємо наявність заказу...",
+        ["UnknownError"] = "Виникла помилка під час отримання товарів у кошику. Будь ласка, зверніться до адміністрації сервера.",
+        ["PleaseWait"] = "Зачекайте будь ласка. Перевіряємо наявність товау у кошику...",
       }, this, "uk");
     }
     
