@@ -17,7 +17,7 @@ namespace Oxide.Plugins {
         ["AntiFlood"] = "This command is locked to prevent flooding. Please wait a few seconds.",
         ["EmptyCart"] = "Your cart is empty.",
         ["GetSuccess"] = "You have successfully received your items. Thank you!",
-        ["UnknownError"] = "An error occurred while retrieving cart items. Please contact the Server Administration.",
+        ["UnknownError"] = "An error occurred while retrieving cart items.",
         ["PleaseWait"] = "Please wait a moment. We are checking the availability of the order...",
       }, this);
 
@@ -26,7 +26,7 @@ namespace Oxide.Plugins {
         ["EmptyCart"] = "Ваш кошик пустий.",
         ["GetSuccess"] = "Ви успішно отримали свої товари. Дякуємо!",
         ["UnknownError"] = "Виникла помилка під час отримання товарів у кошику. Будь ласка, зверніться до адміністрації сервера.",
-        ["PleaseWait"] = "Зачекайте будь ласка. Перевіряємо наявність товау у кошику...",
+        ["PleaseWait"] = "Зачекайте будь ласка. Перевіряємо наявність предметів у кошику...",
       }, this, "uk");
     }
     
@@ -44,9 +44,10 @@ namespace Oxide.Plugins {
 
 
     [ChatCommand("cart")]
-    private async void PrismCartCommand(BasePlayer player, string command, string[] args) {
-
-      if (!commandTimer.CheckCooldown(player)) {
+    private async Task PrismCartCommand(BasePlayer player, string command, string[] args) 
+    {
+      if (!commandTimer.CheckCooldown(player)) 
+      {
         player.ChatMessage(lang.GetMessage("AntiFlood", this, player.UserIDString));
         return;
       }
@@ -54,36 +55,49 @@ namespace Oxide.Plugins {
       player.ChatMessage(lang.GetMessage("PleaseWait", this, player.UserIDString));
 
       string steamId = player.UserIDString;
-      using(var webClient = new System.Net.WebClient()) {
+      using(var webClient = new System.Net.WebClient()) 
+      {
         webClient.Headers.Add("X-API-KEY", apiKey);
-        try {
+        try 
+        {
           string json = await webClient.DownloadStringTaskAsync(apiUrl + steamId);
 
-          var cartItems = JsonConvert.DeserializeObject < List < CartItem >> (json);
+          var cartItems = JsonConvert.DeserializeObject<List<CartItem>>(json);
 
-          if (cartItems == null || !cartItems.Any()) {
+          if (cartItems == null || !cartItems.Any()) 
+          {
             player.ChatMessage(lang.GetMessage("EmptyCart", this, player.UserIDString));
             return;
           }
 
-          foreach(var item in cartItems) {
-            if (string.IsNullOrEmpty(item.command)) {
+          foreach(var item in cartItems) 
+          {
+            if (string.IsNullOrEmpty(item.command)) 
+            {
               Item newItem = ItemManager.CreateByName(item.item, item.quantity);
               newItem.MoveToContainer(player.inventory.containerMain);
-            } else {
+            } 
+            else 
+            {
               string commandWithSteamId = item.command.Replace("{playerid}", steamId);
-              for (int i = 0; i < item.quantity; i++) {
+              for (int i = 0; i < item.quantity; i++) 
+              {
                 rust.RunServerCommand(commandWithSteamId);
               }
             }
           }
 
           player.ChatMessage(lang.GetMessage("GetSuccess", this, player.UserIDString));
-        } catch (System.Net.WebException ex) {
+        } 
+        catch (System.Net.WebException ex) 
+        {
           var response = ex.Response as System.Net.HttpWebResponse;
-          if (response != null && response.StatusCode == System.Net.HttpStatusCode.NotFound) {
+          if (response != null && response.StatusCode == System.Net.HttpStatusCode.NotFound) 
+          {
             player.ChatMessage(lang.GetMessage("EmptyCart", this, player.UserIDString));
-          } else {
+          } 
+          else 
+          {
             player.ChatMessage(lang.GetMessage("UnknownError", this, player.UserIDString));
           }
         }
